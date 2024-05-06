@@ -15,7 +15,9 @@ jobs:
           name: Run unit tests
           command: |
             pytest --cov-report term-missing --cov=src/tests/
-            
+      - run:
+          name: Start Docker
+          command: sudo service docker start      
       - run:
           name: Build and push Docker image
           command: |
