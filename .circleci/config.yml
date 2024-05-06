@@ -15,7 +15,14 @@ jobs:
           name: Run unit tests
           command: |
             pytest --cov-report term-missing --cov=src/tests/
-      
+            
+      - run:
+          name: Build and push Docker image
+          command: |
+            docker build -t ghcr.io/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:latest .
+            echo "${GHCR_PAT}" | docker login ghcr.io -u ${CIRCLE_PROJECT_USERNAME} --password-stdin
+            docker push ghcr.io/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:latest
+  
 workflows:
   version: 2
   build:
