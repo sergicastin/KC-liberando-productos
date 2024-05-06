@@ -21,5 +21,7 @@ jobs:
             docker build -t ghcr.io/${CIRCLE_PROJECT_USERNAME}/liberando-productos-sergi-castillo:latest .
 
             echo "${GHCR_PAT}" | docker login ghcr.io -u ${CIRCLE_PROJECT_USERNAME} --password-stdin
+            
+            docker images
 
             docker push ghcr.io/${CIRCLE_PROJECT_USERNAME}/${liberando-productos-sergi-castillo}:latest
