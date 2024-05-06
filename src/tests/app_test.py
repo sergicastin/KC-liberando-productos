@@ -28,3 +28,11 @@ class TestSimpleServer:
 
         assert response.status_code == 200
         assert response.json() == {"msg": "Hello World"}
+
+    @pytest.mark.asyncio
+    async def test_read_bye(self):
+        """Tests the bye endpoint"""
+        response = client.get("/bye")
+
+        assert response.status_code == 200
+        assert response.json() == {"msg": "Bye Bye"}
