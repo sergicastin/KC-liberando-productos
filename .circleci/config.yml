@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: cimg/python:3.11.9
+      - image: circleci/python:3.11.9
     steps:
       - checkout
       - run:
@@ -16,17 +16,8 @@ jobs:
           command: |
             pytest --cov-report term-missing --cov=src/tests/
       - run:
-          name: Start Docker
-          command: sudo service docker start      
-      - run:
           name: Build and push Docker image
           command: |
             docker build -t ghcr.io/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:latest .
             echo "${GHCR_PAT}" | docker login ghcr.io -u ${CIRCLE_PROJECT_USERNAME} --password-stdin
             docker push ghcr.io/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:latest
-  
-workflows:
-  version: 2
-  build:
-    jobs:
-      - build
