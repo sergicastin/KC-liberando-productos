@@ -19,11 +19,6 @@ jobs:
           name: Build and push Docker image
           command: |
             VERSION="1.1.1"
-
-            docker build -t ghcr.io/${CIRCLE_PROJECT_USERNAME}/liberando-productos-sergi-castillo:latest .
-
+            docker build -t ghcr.io/${CIRCLE_PROJECT_USERNAME}/liberando-productos-sergi-castillo:${VERSION} .
             echo "${GHCR_PAT}" | docker login ghcr.io -u ${CIRCLE_PROJECT_USERNAME} --password-stdin
-
-            docker images
-
-            docker push ghcr.io/${CIRCLE_PROJECT_USERNAME}/liberando-productos-sergi-castillo:latest
+            docker push ghcr.io/${CIRCLE_PROJECT_USERNAME}/liberando-productos-sergi-castillo:${VERSION}
