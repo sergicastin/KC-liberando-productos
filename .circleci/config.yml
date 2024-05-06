@@ -22,4 +22,4 @@ jobs:
 
             echo "${GHCR_PAT}" | docker login ghcr.io -u ${CIRCLE_PROJECT_USERNAME} --password-stdin
 
-            docker push ghcr.io/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:latest
+            docker push ghcr.io/${CIRCLE_PROJECT_USERNAME}/${liberando-productos-sergi-castillo}:latest
