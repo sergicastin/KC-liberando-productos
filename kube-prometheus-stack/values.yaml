@@ -172,3 +172,33 @@ additionalPrometheusRulesMap:
               summary: Container memory limit exceeded ({{ $labels.namespace }}/{{ $labels.pod_name }}/{{ $labels.container_name }})
               description: "Container memory limit exceeded"
               message: Container memory usage is higher than the configured limit
+
+grafana:
+  plugins:
+    - grafana-piechart-panel
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: "default"
+          orgId: 1
+          folder: ""
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/default
+  dashboards:
+    default:
+      node-exporter:
+        gnetId: 11074
+        revision: 9
+        datasource: Prometheus
+      node-exporter-full:
+        gnetId: 1860
+        revision: 29
+        datasource: Prometheus
+      mongodb:
+        gnetId: 16490
+        revision: 1
+        datasource: Prometheus
