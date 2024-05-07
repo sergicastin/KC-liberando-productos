@@ -46,35 +46,6 @@ prometheus:
     ruleSelectorNilUsesHelmValues: true
     serviceMonitorSelectorNilUsesHelmValues: false
     podMonitorSelectorNilUsesHelmValues: false
-  additionalAlertManagerConfigs:
-    global:
-      resolve_timeout: 5m
-    route:
-      group_by: ['job']
-      group_wait: 30s
-      group_interval: 5m
-      repeat_interval: 12h
-      receiver: 'slack'
-      routes:
-      - match:
-          severity: 'critical'
-        receiver: 'slack'
-    receivers:
-      - name: 'slack'
-        slack_configs:
-        - api_url: 'https://hooks.slack.com/services/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'
-          send_resolved: true
-          channel: '#avisos'
-          title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] Monitoring Event Notification'
-          text: |-
-            {{ range .Alerts }}
-              *Alert:* {{ .Labels.alertname }} - `{{ .Labels.severity }}`
-              *Description:* {{ .Annotations.message }}
-              *Graph:* <{{ .GeneratorURL }}|:chart_with_upwards_trend:> *Runbook:* <{{ .Annotations.runbook_url }}|:spiral_note_pad:>
-              *Details:*
-              {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
-              {{ end }}
-            {{ end }}
 
 defaultRules:
   create: true
