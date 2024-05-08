@@ -37,12 +37,17 @@ prometheus-node-exporter:
     - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/.+)($|/)
     - --collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)$
 
+
 prometheus:
   enabled: true
+  ## Configuration for Prometheus service
   prometheusSpec:
     scrapeInterval: 30s
     scrapeTimeout: 10s
     enableAdminAPI: true
+
+    externalUrl: ""
+
     ruleSelectorNilUsesHelmValues: true
     serviceMonitorSelectorNilUsesHelmValues: false
     podMonitorSelectorNilUsesHelmValues: false
@@ -75,8 +80,8 @@ defaultRules:
     prometheus: true
     prometheusOperator: true
 
+## Configuration for alertmanager
 alertmanager:
-  enabled: true
   config:
     global:
       resolve_timeout: 5m
@@ -88,25 +93,34 @@ alertmanager:
       receiver: 'slack'
       routes:
       - match:
-          severity: 'critical'
-        receiver: 'slack'
+          alertname: Watchdog
+        receiver: 'null'
+    # This inhibt rule is a hack from: https://stackoverflow.com/questions/54806336/how-to-silence-prometheus-alertmanager-using-config-files/54814033#54814033
+    inhibit_rules:
+      - target_match_re:
+           alertname: '.+Overcommit'
+        source_match:
+           alertname: 'Watchdog'
+        equal: ['prometheus']
     receivers:
-      - name: 'slack'
-        slack_configs:
-        - api_url: 'https://hooks.slack.com/services/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'
-          send_resolved: true
-          channel: '#avisos'
-          title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] Monitoring Event Notification'
-          text: |-
-            {{ range .Alerts }}
-              *Alert:* {{ .Labels.alertname }} - `{{ .Labels.severity }}`
-              *Description:* {{ .Annotations.message }}
-              *Graph:* <{{ .GeneratorURL }}|:chart_with_upwards_trend:> *Runbook:* <{{ .Annotations.runbook_url }}|:spiral_note_pad:>
-              *Details:*
-              {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
-              {{ end }}
+    - name: 'null'
+    - name: 'slack'
+      slack_configs:
+      - api_url: 'https://hooks.slack.com/services/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' # <--- AÑADIR EN ESTA LÍNEA EL WEBHOOK CREADO
+        send_resolved: true
+        channel: '#avisos' # <--- AÑADIR EN ESTA LÍNEA EL CANAL
+        title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] Monitoring Event Notification'
+        text: |-
+          {{ range .Alerts }}
+            *Alert:* {{ .Labels.alertname }} - `{{ .Labels.severity }}`
+            *Description:* {{ .Annotations.message }}
+            *Graph:* <{{ .GeneratorURL }}|:chart_with_upwards_trend:> *Runbook:* <{{ .Annotations.runbook_url }}|:spiral_note_pad:>
+            *Details:*
+            {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
             {{ end }}
+          {{ end }}
 
+## Manages Prometheus and Alertmanager components
 prometheusOperator:
   enabled: true
 
@@ -124,25 +138,27 @@ additionalPrometheusRulesMap:
               summary: MongoDB Down (instance {{ $labels.instance }})
               description: "MongoDB instance is down"
 
-          - alert: ContainerCPULimitExceeded
-            expr: sum(rate(container_cpu_usage_seconds_total{container_name!="POD", pod_name!="", namespace!="", job!="", container_name!=""}[1m])) by (namespace, pod_name, container_name) / sum(kube_pod_container_resource_limits_cpu_cores{container!="", namespace!="", container!=""}) by (namespace, pod_name, container_name) * 100 > 100
-            for: 1m
+          - alert: fastApiConsumingMoreThanRequest
+            expr: avg(container_memory_usage_bytes{pod=~"my-app-fast-api-webapp-.*"}) by (pod) > avg(kube_pod_container_resource_requests{resource="memory",container="fast-api-webapp"}) by (pod)
+            for: 0m
             labels:
               severity: critical
+              alertname: "fast-api-webapp container is consuming more than requested"
             annotations:
-              summary: Container CPU limit exceeded ({{ $labels.namespace }}/{{ $labels.pod_name }}/{{ $labels.container_name }})
-              description: "Container CPU limit exceeded"
-              message: Container CPU usage is higher than the configured limit
+              summary: Pod {{ $labels.pod }} consuming more than requested
+              description: "Pod more less than request"
+              message: Pod {{ $labels.pod }} is consuming more than requested
 
-          - alert: ContainerMemoryLimitExceeded
-            expr: sum(container_memory_working_set_bytes{container_name!="POD", pod_name!="", namespace!="", job!="", container_name!=""}) by (namespace, pod_name, container_name) / sum(kube_pod_container_resource_limits_memory_bytes{container!="", namespace!="", container!=""}) by (namespace, pod_name, container_name) * 100 > 100
-            for: 1m
+          - alert: HighCpuUsageInFastApiPod
+            expr: sum(rate(container_cpu_usage_seconds_total{pod=~"my-app-fast-api-webapp-.*"}[5m])) / count(container_spec_cpu_quota{pod=~"my-app-fast-api-webapp-.*"}) > 0.8
+            for: 0m
             labels:
               severity: critical
+              alertname: "HighCpuUsageInFastApiPod"
             annotations:
-              summary: Container memory limit exceeded ({{ $labels.namespace }}/{{ $labels.pod_name }}/{{ $labels.container_name }})
-              description: "Container memory limit exceeded"
-              message: Container memory usage is higher than the configured limit
+              summary: High CPU usage in pod {{ $labels.pod }}
+              description: "CPU usage is high in pod {{ $labels.pod }}"
+              message: Pod {{ $labels.pod }} is experiencing high CPU usage.
 
 grafana:
   plugins:
