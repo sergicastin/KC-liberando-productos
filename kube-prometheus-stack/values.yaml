@@ -106,9 +106,9 @@ alertmanager:
     - name: 'null'
     - name: 'slack'
       slack_configs:
-      - api_url: 'https://hooks.slack.com/services/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' # <--- AÑADIR EN ESTA LÍNEA EL WEBHOOK CREADO
+      - api_url: 'https://hooks.slack.com/services/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' # <--- AÑADIR EN ESTA LÍNEA EL WEBHOOK CREADO
         send_resolved: true
-        channel: '#avisos' # <--- AÑADIR EN ESTA LÍNEA EL CANAL
+        channel: '#alarms-notifications-keepcoding-devops-9' # <--- AÑADIR EN ESTA LÍNEA EL CANAL
         title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] Monitoring Event Notification'
         text: |-
           {{ range .Alerts }}
@@ -148,17 +148,6 @@ additionalPrometheusRulesMap:
               summary: Pod {{ $labels.pod }} consuming more than requested
               description: "Pod more less than request"
               message: Pod {{ $labels.pod }} is consuming more than requested
-
-          - alert: HighCpuUsageInFastApiPod
-            expr: sum(rate(container_cpu_usage_seconds_total{pod=~"my-app-fast-api-webapp-.*"}[5m])) / count(container_spec_cpu_quota{pod=~"my-app-fast-api-webapp-.*"}) > 0.8
-            for: 0m
-            labels:
-              severity: critical
-              alertname: "HighCpuUsageInFastApiPod"
-            annotations:
-              summary: High CPU usage in pod {{ $labels.pod }}
-              description: "CPU usage is high in pod {{ $labels.pod }}"
-              message: Pod {{ $labels.pod }} is experiencing high CPU usage.
 
 grafana:
   plugins:
