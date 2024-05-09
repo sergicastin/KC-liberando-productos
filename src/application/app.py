@@ -14,9 +14,6 @@ HEALTHCHECK_REQUESTS = Counter('healthcheck_requests_total', 'Total number of re
 MAIN_ENDPOINT_REQUESTS = Counter('main_requests_total', 'Total number of requests to main endpoint')
 BYE_ENDPOINT_REQUESTS = Counter('bye_requests_total', 'Total number of requests to say_bye endpoint')
 
-instrumentator = Instrumentator()
-instrumentator.instrument(app).expose(app)
-
 class SimpleServer:
     """
     SimpleServer class define FastAPI configuration and implemented endpoints
