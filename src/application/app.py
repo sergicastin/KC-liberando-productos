@@ -1,52 +1,66 @@
+"""
+Module define fastapi server configuration
+"""
+
 from fastapi import FastAPI
 from hypercorn.asyncio import serve
 from hypercorn.config import Config as HyperCornConfig
-from prometheus_client import Counter, generate_latest
-from prometheus_fastapi_instrumentator import Instrumentator
+from prometheus_client import Counter
 
 app = FastAPI()
 
-# Definir contadores de métricas
 REQUESTS = Counter('server_requests_total', 'Total number of requests to this webserver')
 HEALTHCHECK_REQUESTS = Counter('healthcheck_requests_total', 'Total number of requests to healthcheck')
 MAIN_ENDPOINT_REQUESTS = Counter('main_requests_total', 'Total number of requests to main endpoint')
 BYE_ENDPOINT_REQUESTS = Counter('bye_requests_total', 'Total number of requests to say_bye endpoint')
 
-# Instanciar la clase Instrumentator para la instrumentación de Prometheus
 instrumentator = Instrumentator()
 instrumentator.instrument(app).expose(app)
 
-# Definir el endpoint /health
-@app.get("/health")
-async def health_check():
-    """Implement health check endpoint"""
-    # Incrementar el contador utilizado para registrar el número total de llamadas al servidor web
-    REQUESTS.inc()
-    # Incrementar el contador utilizado para registrar las solicitudes al punto final de verificación de salud
-    HEALTHCHECK_REQUESTS.inc()
-    return {"health": "ok"}
+class SimpleServer:
+    """
+    SimpleServer class define FastAPI configuration and implemented endpoints
+    """
 
-# Definir el endpoint /
-@app.get("/")
-async def read_main():
-    """Implement main endpoint"""
-    # Incrementar el contador utilizado para registrar el número total de llamadas al servidor web
-    REQUESTS.inc()
-    # Incrementar el contador utilizado para registrar el número total de llamadas en el punto final principal
-    MAIN_ENDPOINT_REQUESTS.inc()
-    return {"msg": "Hello World"}
+    _hypercorn_config = None
 
-# Definir el endpoint /bye
-@app.get("/bye")
-async def say_bye():
-    """Implement bye endpoint"""
-    # Incrementar el contador utilizado para registrar el número total de llamadas al servidor web
-    BYE_ENDPOINT_REQUESTS.inc()
-    return {"msg": "Bye Bye"}
+    def __init__(self):
+        self._hypercorn_config = HyperCornConfig()
 
-# Definir el endpoint /metrics
-@app.get("/metrics")
-async def metrics():
-    """Implement metrics endpoint"""
-    # Generar las últimas métricas registradas en formato Prometheus
-    return generate_latest()
+    async def run_server(self):
+        """Starts the server with the config parameters"""
+        self._hypercorn_config.bind = ['0.0.0.0:8081']
+        self._hypercorn_config.keep_alive_timeout = 90
+        await serve(app, self._hypercorn_config)
+
+    @app.get("/health")
+    async def health_check():
+        """Implement health check endpoint"""
+        # Increment counter used for register the total number of calls in the webserver
+        REQUESTS.inc()
+        # Increment counter used for register the requests to healtcheck endpoint
+        HEALTHCHECK_REQUESTS.inc()
+        return {"health": "ok"}
+
+    @app.get("/")
+    async def read_main():
+        """Implement main endpoint"""
+        # Increment counter used for register the total number of calls in the webserver
+        REQUESTS.inc()
+        # Increment counter used for register the total number of calls in the main endpoint
+        MAIN_ENDPOINT_REQUESTS.inc()
+        return {"msg": "Hello World"}
+    
+    @app.get("/bye")
+    async def say_bye():
+        """Implement bye endpoint"""
+        # Incrementa el contador utilizado para registrar el número total de llamadas al servidor web
+        BYE_ENDPOINT_REQUESTS.inc()
+        return {"msg": "Bye Bye"}
+
+    # Definir el endpoint /metrics
+    @app.get("/metrics")
+    async def metrics():
+        """Implement metrics endpoint"""
+        # Generar las últimas métricas registradas en formato Prometheus
+        return generate_latest()
