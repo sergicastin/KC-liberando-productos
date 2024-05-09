@@ -130,7 +130,7 @@ additionalPrometheusRulesMap:
       - name: ruleset_1
         rules:
           - alert: HighCpuUsageInFastApiApp
-            expr: sum(rate(container_cpu_usage_seconds_total{instance="0.0.0.0:8081"}[5m])) / count(container_spec_cpu_quota{instance="0.0.0.0:8081"}) > 0.8
+            expr: python_app_cpu_usage > 50
             for: 0m
             labels:
               severity: critical
@@ -139,6 +139,7 @@ additionalPrometheusRulesMap:
               summary: High CPU usage in FastAPI application
               description: "CPU usage is high in the FastAPI application"
               message: The FastAPI application is experiencing high CPU usage.
+
               
 grafana:
   plugins:
