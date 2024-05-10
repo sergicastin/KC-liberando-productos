@@ -130,8 +130,8 @@ additionalPrometheusRulesMap:
       - name: ruleset_1
         rules:
           - alert: HighCpuUsageInFastApiApp
-            expr: python_app_cpu_usage > 50
-            for: 0m
+            expr: sum(rate(container_cpu_usage_seconds_total{namespace="fast-api", pod_name=~"my-app-fast-api-webapp.*"}[5m])) / sum(container_spec_cpu_quota{namespace="fast-api", pod_name=~"my-app-fast-api-webapp.*"}) * 100 > 50
+            for: 1m
             labels:
               severity: critical
               alertname: "HighCpuUsageInFastApiApp"
