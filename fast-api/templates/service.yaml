@@ -18,4 +18,4 @@ spec:
       name: {{ .Values.metrics.svc.name }}
     {{- end }}
   selector:
-    {{- include "fast-api-webapp.selectorLabels" . | nindent 4 }}
+    {{- include "fast-api.selectorLabels" . | nindent 4 }}

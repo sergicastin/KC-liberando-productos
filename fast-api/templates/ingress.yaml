@@ -15,9 +15,9 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ $fullName }} # Cambiado de "fast-api-webapp" a "fast-api"
+  name: {{ $fullName }}
   labels:
-    {{- include "fast-api.labels" . | nindent 4 }} # Cambiado de "fast-api-webapp" a "fast-api"
+    {{- include "fast-api.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}

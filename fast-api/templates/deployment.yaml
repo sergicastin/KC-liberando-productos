@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "fast-api.fullname" . }} # Cambiado de "fast-api-webapp" a "fast-api"
+  name: {{ include "fast-api.fullname" . }}
   labels:
     {{- include "fast-api.labels" . | nindent 4 }}
 spec:
@@ -27,7 +27,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "fast-api.serviceAccountName" . }} # Cambiado de "fast-api-webapp" a "fast-api"
+      serviceAccountName: {{ include "fast-api.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
