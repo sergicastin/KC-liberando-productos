@@ -1,4 +1,4 @@
-# Default values for fast-api-webapp.
+# Default values for fast-api-app.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -60,7 +60,7 @@ metrics:
 service:
   # -- Service Type
   type: ClusterIP
-  # -- Service number for the webapp
+  # -- Service number for the app
   port: 8081
 
 ingress:
