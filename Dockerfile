@@ -4,6 +4,8 @@ WORKDIR /service/app
 ADD ./src/ /service/app/
 COPY requirements.txt /service/app/
 
+RUN apk update && \
+    apk add --no-cache build-base python3-dev linux-headers
 RUN apk --no-cache add curl build-base npm
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
