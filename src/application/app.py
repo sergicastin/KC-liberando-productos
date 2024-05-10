@@ -55,9 +55,3 @@ class SimpleServer:
         BYE_ENDPOINT_REQUESTS.inc()
         return {"msg": "Bye Bye"}
 
-    # Definir el endpoint /metrics
-    @app.get("/metrics")
-    async def metrics():
-        """Implement metrics endpoint"""
-        # Generar las últimas métricas registradas en formato Prometheus
-        return generate_latest()
