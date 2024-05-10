@@ -1,4 +1,4 @@
-# Default values for fast-api-app.
+# Default values for fast-api-webapp.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -60,7 +60,7 @@ metrics:
 service:
   # -- Service Type
   type: ClusterIP
-  # -- Service number for the app
+  # -- Service number for the webapp
   port: 8081
 
 ingress:
@@ -100,3 +100,24 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+config:
+  mongoService: mongodb
+
+mongodb:
+  # -- Indicate whether MongoDB will be enabled or not
+  enabled: true
+  # -- Number of members of MongoDB replicaset
+  members: 3
+  # -- MongoDB version
+  version: "5.0.6"
+  # -- MongoDB Admin User
+  adminUser: "my-user"
+  # -- MongoDB user
+  user: "my-user-fast-api"
+  # -- MongoDB password
+  password: "password"
+  # -- Metrics configuration
+  metrics:
+    # -- Indicate wheter the metrics will be configured or not
+    enabled: true

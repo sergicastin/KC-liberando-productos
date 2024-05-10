@@ -2,13 +2,13 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "fast-api.fullname"  . }}
+  name: {{ include "fast-api-webapp.fullname"  . }}
   labels:
-    {{- include "fast-api.labels" . | nindent 4 }}
+    {{- include "fast-api-webapp.labels" . | nindent 4 }}
 spec:
   endpoints:
   - port: {{ .Values.metrics.svc.name }}
   selector:
     matchLabels:
-      {{- include "fast-api.selectorLabels" . | nindent 6 }}
+      {{- include "fast-api-webapp.selectorLabels" . | nindent 6 }}
 {{- end }}
