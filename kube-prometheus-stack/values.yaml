@@ -95,6 +95,11 @@ alertmanager:
       - match:
           alertname: Watchdog
         receiver: 'null'
+      # Nueva alerta para enviar un mensaje cada 30 segundos
+      - match:
+          alertname: 'Every30Seconds'
+        receiver: 'slack'
+        repeat_interval: 30s
     # This inhibt rule is a hack from: https://stackoverflow.com/questions/54806336/how-to-silence-prometheus-alertmanager-using-config-files/54814033#54814033
     inhibit_rules:
       - target_match_re:
@@ -106,9 +111,9 @@ alertmanager:
     - name: 'null'
     - name: 'slack'
       slack_configs:
-      - api_url: '{{ .Values.SLACK_WEBHOOK_URL }}' # <--- Reemplazar con la variable correspondiente
+      - api_url: '' # <--- AÑADIR EN ESTA LÍNEA EL WEBHOOK CREADO
         send_resolved: true
-        channel: '#alarms-notifications-keepcoding-devops-sre-9' # <--- Añadir el canal correspondiente
+        channel: '#alarms-notifications-keepcoding-devops-8' # <--- AÑADIR EN ESTA LÍNEA EL CANAL
         title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] Monitoring Event Notification'
         text: |-
           {{ range .Alerts }}
@@ -129,18 +134,37 @@ additionalPrometheusRulesMap:
     groups:
       - name: ruleset_1
         rules:
-          - alert: HighCpuUsageInFastApiApp
-            expr: sum(rate(container_cpu_usage_seconds_total{namespace="fast-api", pod_name=~"my-app-fast-api-webapp.*"}[5m])) / sum(container_spec_cpu_quota{namespace="fast-api", pod_name=~"my-app-fast-api-webapp.*"}) * 100 > 50
-            for: 1m
+          - alert: MongoDBDown
+            expr: mongodb_up == 0
+            for: 0m
             labels:
               severity: critical
-              alertname: "HighCpuUsageInFastApiApp"
             annotations:
-              summary: High CPU usage in FastAPI application
-              description: "CPU usage is high in the FastAPI application"
-              message: The FastAPI application is experiencing high CPU usage.
+              summary: MongoDB Down (instance {{ $labels.instance }})
+              description: "MongoDB instance is down"
 
-              
+          - alert: fastApiConsumingMoreThanRequest
+            expr: avg(container_memory_usage_bytes{pod=~"my-app-fast-api-webapp-.*"}) by (pod) > avg(kube_pod_container_resource_requests{resource="memory",container="fast-api-webapp"}) by (pod)
+            for: 0m
+            labels:
+              severity: critical
+              alertname: "fast-api-webapp container is consuming more than requested"
+            annotations:
+              summary: Pod {{ $labels.pod }} consuming more than requested
+              description: "Pod more less than request"
+              message: Pod {{ $labels.pod }} is consuming more than requested
+
+          # Nueva regla de alerta para enviar cada 30 segundos
+          - alert: Every30Seconds
+            expr: vector(1)
+            for: 0s
+            labels:
+              severity: info
+            annotations:
+              summary: "Send Slack message every 30 seconds"
+              description: "This is an alert meant to send a Slack message every 30 seconds."
+
+
 grafana:
   plugins:
     - grafana-piechart-panel
