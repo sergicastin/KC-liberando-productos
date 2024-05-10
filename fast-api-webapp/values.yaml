@@ -82,14 +82,14 @@ ingress:
 # -- Resources configuration for the deployment
 resources:
   limits:
-    cpu: 200m
-    memory: 256Mi
+    cpu: 300m
+    memory: 512Mi
   requests:
     cpu: 100m
     memory: 128Mi
 
 autoscaling:
-  enabled: true
+  enabled: false
   minReplicas: 1
   maxReplicas: 100
   targetCPUUtilizationPercentage: 70
