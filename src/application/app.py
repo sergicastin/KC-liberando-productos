@@ -62,12 +62,10 @@ class SimpleServer:
 # Instancia de la clase SimpleServer
 simple_server = SimpleServer()
 
-# Llama al método on_startup() para incrementar el contador POD_STARTUPS
-await simple_server.on_startup()
-
 # Ejecución del servidor
 if __name__ == "__main__":
     import asyncio
     loop = asyncio.get_event_loop()
+    loop.run_until_complete(simple_server.on_startup())
     loop.run_until_complete(simple_server.run_server())
     loop.close()
