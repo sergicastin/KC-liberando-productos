@@ -8,7 +8,7 @@ REQUESTS = Counter('server_requests_total', 'Todos los request')
 HEALTHCHECK_REQUESTS = Counter('healthcheck_requests_total', 'Todos los request a healthcheck')
 MAIN_ENDPOINT_REQUESTS = Counter('main_requests_total', 'Todos los request al endpoint principal')
 BYE_ENDPOINT_REQUESTS = Counter('bye_requests_total', 'Todos los request a say_bye endpoint')
-POD_STARTUPS = Counter('POD_STARTUPS', 'Todas las veces que se ha arrancado la aplicación')
+TOTAL_POD_STARTUPS = Counter('POD_STARTUPS', 'Todas las veces que se ha arrancado la aplicación')
 
 app = FastAPI()
 
