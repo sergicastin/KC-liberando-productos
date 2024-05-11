@@ -1,7 +1,4 @@
 {
-  "annotations": {
-    "list": []
-  },
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
@@ -9,12 +6,11 @@
   "links": [],
   "panels": [
     {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
       "datasource": "Prometheus",
-      "fill": 1,
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -22,29 +18,22 @@
         "y": 0
       },
       "id": 2,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
       "options": {
-        "alertThreshold": true
+        "legend": {
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        }
       },
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
       "targets": [
         {
           "expr": "sum(rate(main_requests_total[5m]))",
@@ -52,31 +41,150 @@
           "interval": "",
           "legendFormat": "Main Requests",
           "refId": "A"
-        },
-        {
-          "expr": "sum(rate(healthcheck_requests_total[5m]))",
-          "format": "time_series",
-          "interval": "",
-          "legendFormat": "Healthcheck Requests",
-          "refId": "B"
-        },
-        {
-          "expr": "sum(rate(bye_requests_total[5m]))",
-          "format": "time_series",
-          "interval": "",
-          "legendFormat": "Bye Requests",
-          "refId": "C"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Requests Total",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
+      "title": "Main Requests",
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
       },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ]
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(healthcheck_requests_total[5m]))",
+          "format": "time_series",
+          "interval": "",
+          "legendFormat": "Healthcheck Requests",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Healthcheck Requests",
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ]
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(bye_requests_total[5m]))",
+          "format": "time_series",
+          "interval": "",
+          "legendFormat": "Bye Requests",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Bye Requests",
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -105,7 +213,7 @@
       ]
     }
   ],
-  "schemaVersion": 18,
+  "schemaVersion": 25,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -141,7 +249,7 @@
     ]
   },
   "timezone": "",
-  "title": "Metrics Dashboard",
-  "uid": "metrics-dashboard",
-  "version": 2
+  "title": "Requests Metrics",
+  "uid": "XK1ssEjnG",
+  "version": 1
 }
