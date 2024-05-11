@@ -134,36 +134,16 @@ additionalPrometheusRulesMap:
     groups:
       - name: ruleset_1
         rules:
-          - alert: MongoDBDown
-            expr: mongodb_up == 0
-            for: 0m
+          - alert: fastApiConsumingMoreCPUThanLimit
+            expr: rate(container_cpu_usage_seconds_total{namespace="fast-api", pod=~"my-app-fast-api-webapp-.*"}[5m]) > kube_pod_container_resource_limits{namespace="fast-api", container="fast-api-webapp", resource="cpu"}
+            for: 1m
             labels:
               severity: critical
+              alertname: "Alerta CPU elevada"
             annotations:
-              summary: MongoDB Down (instance {{ $labels.instance }})
-              description: "MongoDB instance is down"
-
-          - alert: fastApiConsumingMoreThanRequest
-            expr: avg(container_memory_usage_bytes{pod=~"my-app-fast-api-webapp-.*"}) by (pod) > avg(kube_pod_container_resource_requests{resource="memory",container="fast-api-webapp"}) by (pod)
-            for: 0m
-            labels:
-              severity: critical
-              alertname: "fast-api-webapp container is consuming more than requested"
-            annotations:
-              summary: Pod {{ $labels.pod }} consuming more than requested
-              description: "Pod more less than request"
-              message: Pod {{ $labels.pod }} is consuming more than requested
-
-          # Nueva regla de alerta para enviar cada 30 segundos
-          - alert: Every30Seconds
-            expr: vector(1)
-            for: 0s
-            labels:
-              severity: info
-            annotations:
-              summary: "Send Slack message every 30 seconds"
-              description: "This is an alert meant to send a Slack message every 30 seconds."
-
+              summary: "El POD está consumiendo más CPU de la indicada."
+              description: "El POD está consumiendo más CPU de la indicada."
+              message: "El POD {{ $labels.pod }} está consumiendo más CPU de la indicada en el límite."
 
 grafana:
   plugins:
