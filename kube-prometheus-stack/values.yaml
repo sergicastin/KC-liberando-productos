@@ -89,7 +89,7 @@ alertmanager:
       group_by: ['job']
       group_wait: 30s
       group_interval: 5m
-      repeat_interval: 12h
+      repeat_interval: 30s
       receiver: 'slack'
       routes:
       - match:
@@ -113,7 +113,7 @@ alertmanager:
       slack_configs:
       - api_url: '' # <--- AÑADIR EN ESTA LÍNEA EL WEBHOOK CREADO
         send_resolved: true
-        channel: '#alarms-notifications-keepcoding-devops-8' # <--- AÑADIR EN ESTA LÍNEA EL CANAL
+        channel: '#alarms-notifications-keepcoding-devops-sre-9' # <--- AÑADIR EN ESTA LÍNEA EL CANAL
         title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] Monitoring Event Notification'
         text: |-
           {{ range .Alerts }}
