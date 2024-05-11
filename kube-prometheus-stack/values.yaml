@@ -148,6 +148,19 @@ additionalPrometheusRulesMap:
             annotations:
               summary: "Send Slack message every 30 seconds"
               description: "This is an alert meant to send a Slack message every 30 seconds."
+      
+      - name: manualAlerts
+        rules:
+          - alert: ManualAlertHighCPUUsage
+            expr: sum(rate(container_cpu_usage_seconds_total{namespace="fast-api", pod=~"my-app-fast-api-webapp-.*"}[5m])) > 0.9
+            for: 1m
+            labels:
+              severity: critical
+              alertname: "ManualAlertHighCPUUsage"
+            annotations:
+              summary: "High CPU Usage Detected in Pod"
+              description: "High CPU usage detected in Pods matching the pattern 'my-app-fast-api-webapp-' in namespace 'fast-api'."
+              message: "High CPU usage detected in Pods matching the pattern 'my-app-fast-api-webapp-' in namespace 'fast-api'."
 
 
 
