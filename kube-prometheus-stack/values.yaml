@@ -138,6 +138,16 @@ additionalPrometheusRulesMap:
               summary: El Pod {{ $labels.pod }} está consumiendo mas CPU que la asignada
               description: "El uso de la CPU del Pod {{ $labels.pod }} supera lo indicado"
               message: El Pod {{ $labels.pod }} está consumiendo mas CPU que la asignada
+          
+                    # Nueva regla de alerta para enviar cada 30 segundos
+          - alert: Every30Seconds
+            expr: vector(1)
+            for: 0s
+            labels:
+              severity: info
+            annotations:
+              summary: "Send Slack message every 30 seconds"
+              description: "This is an alert meant to send a Slack message every 30 seconds."
 
 
 
