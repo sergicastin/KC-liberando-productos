@@ -135,7 +135,7 @@ additionalPrometheusRulesMap:
       - name: ruleset_1
         rules:
           - alert: fastApiConsumingMoreCPUThanLimit
-            expr: rate(container_cpu_usage_seconds_total{namespace="fast-api", pod=~"my-app-fast-api-webapp-.*"}[5m]) > kube_pod_container_resource_limits{namespace="fast-api", container="fast-api-webapp", resource="cpu"}
+            expr: rate(container_cpu_usage_seconds_total{namespace="fast-api", pod=~"my-app-fast-api-webapp-.*"}[5m]) > 80
             for: 1m
             labels:
               severity: critical
