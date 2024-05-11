@@ -1,18 +1,18 @@
-"""
-Module define fastapi server configuration
-"""
-
 from fastapi import FastAPI
 from hypercorn.asyncio import serve
 from hypercorn.config import Config as HyperCornConfig
 from prometheus_client import Counter
 
+# Importa la métrica que registra el inicio del pod
+from your_module import POD_STARTUPS
+
 app = FastAPI()
 
-REQUESTS = Counter('server_requests_total', 'Total number of requests to this webserver')
-HEALTHCHECK_REQUESTS = Counter('healthcheck_requests_total', 'Total number of requests to healthcheck')
-MAIN_ENDPOINT_REQUESTS = Counter('main_requests_total', 'Total number of requests to main endpoint')
-BYE_ENDPOINT_REQUESTS = Counter('bye_requests_total', 'Total number of requests to say_bye endpoint')
+REQUESTS = Counter('server_requests_total', 'Todos los request')
+HEALTHCHECK_REQUESTS = Counter('healthcheck_requests_total', 'Todos los request a healthcheck')
+MAIN_ENDPOINT_REQUESTS = Counter('main_requests_total', 'Todos los request al endpoint principal')
+BYE_ENDPOINT_REQUESTS = Counter('bye_requests_total', 'Todos los request a say_bye endpoint')
+POD_STARTUPS = Counter('POD_STARTUPS', 'Todas las veces que se ha arrancado la aplicación')
 
 class SimpleServer:
     """
@@ -51,7 +51,23 @@ class SimpleServer:
     @app.get("/bye")
     async def say_bye():
         """Implement bye endpoint"""
+        REQUESTS.inc()
         # Incrementa el contador utilizado para registrar el número total de llamadas al servidor web
         BYE_ENDPOINT_REQUESTS.inc()
         return {"msg": "Bye Bye"}
 
+    async def on_startup(self):
+        """Function to run on startup"""
+        # Incrementa el contador utilizado para registrar el inicio del pod
+        POD_STARTUPS.inc()
+
+# Instancia de la clase SimpleServer
+simple_server = SimpleServer()
+
+# Ejecución del servidor
+if __name__ == "__main__":
+    import asyncio
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(simple_server.on_startup())
+    loop.run_until_complete(simple_server.run_server())
+    loop.close()
