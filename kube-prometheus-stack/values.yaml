@@ -135,7 +135,7 @@ additionalPrometheusRulesMap:
       - name: ruleset_1
         rules:
           - alert: fastApiConsumingMoreCPUThanLimit
-            expr: rate(container_cpu_usage_seconds_total{namespace="fast-api", pod=~"my-app-fast-api-webapp-.*"}[5m]) > 2
+            expr: rate(container_cpu_usage_seconds_total{namespace="fast-api", pod=~"my-app-fast-api-webapp-.*"}[5m]) > 0.002
             for: 1m
             labels:
               severity: critical
@@ -144,6 +144,7 @@ additionalPrometheusRulesMap:
               summary: "El POD está consumiendo más CPU de la indicada."
               description: "El POD está consumiendo más CPU de la indicada."
               message: "El POD {{ $labels.pod }} está consumiendo más CPU de la indicada en el límite."
+
 
 
 
