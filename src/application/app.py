@@ -3,16 +3,14 @@ from hypercorn.asyncio import serve
 from hypercorn.config import Config as HyperCornConfig
 from prometheus_client import Counter
 
-# Importa la métrica que registra el inicio del pod
-from your_module import POD_STARTUPS
-
-app = FastAPI()
-
+# Define todas las métricas en el mismo archivo
 REQUESTS = Counter('server_requests_total', 'Todos los request')
 HEALTHCHECK_REQUESTS = Counter('healthcheck_requests_total', 'Todos los request a healthcheck')
 MAIN_ENDPOINT_REQUESTS = Counter('main_requests_total', 'Todos los request al endpoint principal')
 BYE_ENDPOINT_REQUESTS = Counter('bye_requests_total', 'Todos los request a say_bye endpoint')
 POD_STARTUPS = Counter('POD_STARTUPS', 'Todas las veces que se ha arrancado la aplicación')
+
+app = FastAPI()
 
 class SimpleServer:
     """
@@ -33,7 +31,7 @@ class SimpleServer:
     @app.get("/health")
     async def health_check():
         """Implement health check endpoint"""
-        # Increment counter used for register the total number of calls in the webserver
+        # Increment counter used for register the total number of calls in the webserver
         REQUESTS.inc()
         # Increment counter used for register the requests to healtcheck endpoint
         HEALTHCHECK_REQUESTS.inc()
@@ -42,7 +40,7 @@ class SimpleServer:
     @app.get("/")
     async def read_main():
         """Implement main endpoint"""
-        # Increment counter used for register the total number of calls in the webserver
+        # Increment counter used for register the total number of calls in the webserver
         REQUESTS.inc()
         # Increment counter used for register the total number of calls in the main endpoint
         MAIN_ENDPOINT_REQUESTS.inc()
